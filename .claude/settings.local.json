@@ -4,7 +4,12 @@
       "Bash(find:*)",
       "Bash(ls -la \"C:\\Users\\11231\\Desktop\\LocalRepo\\EZarchive\\EZ_Archive\\.github\")",
       "Bash(npm run build:*)",
-      "Bash(npm run check:*)"
+      "Bash(npm run check:*)",
+      "Bash(npm install)",
+      "Bash(grep -r \"Button\" src/lib/components/search src/lib/components/mistakes src/lib/components/chat/ChatSummaryModal.svelte)",
+      "Bash(node --version)",
+      "Bash(npm --version)",
+      "Bash(npm run lint:frontend)"
     ],
     "deny": []
   }

@@ -274,7 +274,7 @@
 					type="button"
 					class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
 					on:click={saveSummary}
-					disabled={loading || saving}
+					disabled={loading}
 				>
 					{#if loading}
 						<Spinner class="w-4 h-4 mr-2" />
