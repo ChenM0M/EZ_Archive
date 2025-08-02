@@ -57,6 +57,8 @@
 	import PencilSquare from '../icons/PencilSquare.svelte';
 	import Home from '../icons/Home.svelte';
 	import Search from '../icons/Search.svelte';
+	import Brain from '../icons/Brain.svelte';
+	import BookOpen from '../icons/BookOpen.svelte';
 	import SearchModal from './SearchModal.svelte';
 	import FolderModal from './Sidebar/Folders/FolderModal.svelte';
 

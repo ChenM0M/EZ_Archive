@@ -7,15 +7,15 @@
 	import { user } from '$lib/stores';
 	import { getTimeRange } from '$lib/utils';
 	
-	import Button from '../common/Button.svelte';
-	import BookOpen from '../icons/BookOpen.svelte';
-	import Brain from '../icons/Brain.svelte';
-	import Tags from '../icons/Tags.svelte';
-	import ChatBubbles from '../icons/ChatBubbles.svelte';
-	import ChartBar from '../icons/ChartBar.svelte';
-	import XMark from '../icons/XMark.svelte';
-	import Spinner from '../common/Spinner.svelte';
-	import Tooltip from '../common/Tooltip.svelte';
+	import Button from '$lib/components/common/Button.svelte';
+	import BookOpen from '$lib/components/icons/BookOpen.svelte';
+	import Brain from '$lib/components/icons/Brain.svelte';
+	import Tags from '$lib/components/icons/Tags.svelte';
+	import ChatBubbles from '$lib/components/icons/ChatBubbles.svelte';
+	import ChartBar from '$lib/components/icons/ChartBar.svelte';
+	import XMark from '$lib/components/icons/XMark.svelte';
+	import Spinner from '$lib/components/common/Spinner.svelte';
+	import Tooltip from '$lib/components/common/Tooltip.svelte';
 
 	const i18n = getContext('i18n');
 
@@ -207,7 +207,11 @@
 							class="border border-red-200 dark:border-red-800 rounded-lg p-4 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
 						>
 							<div class="flex items-start justify-between">
-								<div class="flex-1 min-w-0 cursor-pointer" on:click={() => openChat(chat.id)}>
+								<button 
+									type="button"
+									class="flex-1 min-w-0 text-left focus:outline-none focus:ring-2 focus:ring-red-500 rounded p-1"
+									on:click={() => openChat(chat.id)}
+								>
 									<h3 class="text-lg font-medium text-gray-900 dark:text-white truncate">
 										{chat.title}
 									</h3>
@@ -242,7 +246,7 @@
 											错题
 										</span>
 									</div>
-								</div>
+								</button>
 								
 								<div class="ml-4 flex items-center gap-2">
 									<Tooltip content="移出错题本">

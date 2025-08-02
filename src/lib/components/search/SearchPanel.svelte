@@ -7,15 +7,15 @@
 	import { user } from '$lib/stores';
 	import { getTimeRange } from '$lib/utils';
 	
-	import Button from '../common/Button.svelte';
-	import Search from '../icons/Search.svelte';
-	import BookOpen from '../icons/BookOpen.svelte';
-	import Brain from '../icons/Brain.svelte';
-	import Tags from '../icons/Tags.svelte';
-	import ChatBubbles from '../icons/ChatBubbles.svelte';
-	import ChevronDown from '../icons/ChevronDown.svelte';
-	import XMark from '../icons/XMark.svelte';
-	import Spinner from '../common/Spinner.svelte';
+	import Button from '$lib/components/common/Button.svelte';
+	import Search from '$lib/components/icons/Search.svelte';
+	import BookOpen from '$lib/components/icons/BookOpen.svelte';
+	import Brain from '$lib/components/icons/Brain.svelte';
+	import Tags from '$lib/components/icons/Tags.svelte';
+	import ChatBubbles from '$lib/components/icons/ChatBubbles.svelte';
+	import ChevronDown from '$lib/components/icons/ChevronDown.svelte';
+	import XMark from '$lib/components/icons/XMark.svelte';
+	import Spinner from '$lib/components/common/Spinner.svelte';
 
 	const i18n = getContext('i18n');
 
@@ -339,8 +339,9 @@
 				{:else}
 					<div class="space-y-4">
 						{#each searchResults as chat}
-							<div 
-								class="border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+							<button 
+								type="button"
+								class="w-full text-left border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
 								on:click={() => openChat(chat.id)}
 							>
 								<div class="flex items-start justify-between">
@@ -377,7 +378,7 @@
 										</div>
 									</div>
 								</div>
-							</div>
+							</button>
 						{/each}
 					</div>
 				{/if}

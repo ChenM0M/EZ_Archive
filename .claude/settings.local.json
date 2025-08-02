@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(find:*)",
-      "Bash(ls -la \"C:\\Users\\11231\\Desktop\\LocalRepo\\EZarchive\\EZ_Archive\\.github\")"
+      "Bash(ls -la \"C:\\Users\\11231\\Desktop\\LocalRepo\\EZarchive\\EZ_Archive\\.github\")",
+      "Bash(npm run build:*)"
     ],
     "deny": []
   }
