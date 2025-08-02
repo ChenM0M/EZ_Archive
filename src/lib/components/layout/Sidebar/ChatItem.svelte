@@ -15,7 +15,8 @@
 		getChatList,
 		getChatListByTagName,
 		getPinnedChatList,
-		updateChatById
+		updateChatById,
+		toggleMistakeById
 	} from '$lib/apis/chats';
 	import {
 		chatId,
@@ -32,6 +33,7 @@
 	import ChatMenu from './ChatMenu.svelte';
 	import DeleteConfirmDialog from '$lib/components/common/ConfirmDialog.svelte';
 	import ShareChatModal from '$lib/components/chat/ShareChatModal.svelte';
+	import ChatSummaryModal from '$lib/components/chat/ChatSummaryModal.svelte';
 	import GarbageBin from '$lib/components/icons/GarbageBin.svelte';
 	import Tooltip from '$lib/components/common/Tooltip.svelte';
 	import ArchiveBox from '$lib/components/icons/ArchiveBox.svelte';
@@ -67,6 +69,7 @@
 	};
 
 	let showShareChatModal = false;
+	let showSummaryModal = false;
 	let confirmEdit = false;
 
 	let chatTitle = title;
@@ -134,6 +137,21 @@
 	const archiveChatHandler = async (id) => {
 		await archiveChatById(localStorage.token, id);
 		dispatch('change');
+	};
+
+	const summaryHandler = () => {
+		showSummaryModal = true;
+	};
+
+	const mistakeHandler = async () => {
+		try {
+			await toggleMistakeById(localStorage.token, id);
+			dispatch('change');
+			toast.success('错题状态已更新');
+		} catch (error) {
+			console.error('Error toggling mistake:', error);
+			toast.error('更新失败，请重试');
+		}
 	};
 
 	let itemElement;
@@ -267,6 +285,7 @@
 </script>
 
 <ShareChatModal bind:show={showShareChatModal} chatId={id} />
+<ChatSummaryModal bind:show={showSummaryModal} chatId={id} on:updated={() => dispatch('change')} />
 
 <DeleteConfirmDialog
 	bind:show={showDeleteConfirm}
@@ -471,6 +490,8 @@
 						archiveChatHandler(id);
 					}}
 					{renameHandler}
+					{summaryHandler}
+					{mistakeHandler}
 					deleteHandler={() => {
 						showDeleteConfirm = true;
 					}}

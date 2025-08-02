@@ -1,17 +1,21 @@
 import json
 import logging
+import time
 from typing import Optional
 
 
 from open_webui.socket.main import get_event_emitter
+from open_webui.internal.db import get_db
 from open_webui.models.chats import (
     ChatForm,
     ChatImportForm,
     ChatResponse,
     Chats,
     ChatTitleIdResponse,
+    Chat,
+    ChatModel,
 )
-from open_webui.models.tags import TagModel, Tags
+from open_webui.models.tags import TagModel, Tags, TagForm
 from open_webui.models.folders import Folders
 
 from open_webui.config import ENABLE_ADMIN_CHAT_ACCESS, ENABLE_ADMIN_EXPORT
@@ -23,6 +27,8 @@ from pydantic import BaseModel
 
 from open_webui.utils.auth import get_admin_user, get_verified_user
 from open_webui.utils.access_control import has_permission
+from open_webui.utils.models import get_available_models
+import requests
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MODELS"])
@@ -867,4 +873,416 @@ async def delete_all_tags_by_id(id: str, user=Depends(get_verified_user)):
     else:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail=ERROR_MESSAGES.NOT_FOUND
+        )
+
+
+############################
+# ChatSummaryForm
+############################
+
+
+class ChatSummaryForm(BaseModel):
+    subject: Optional[str] = None
+    knowledge_points: Optional[list[str]] = None
+    tags: Optional[list[str]] = None
+
+
+class ChatSummaryResponse(BaseModel):
+    subject: str
+    knowledge_points: list[str]
+    summary: str
+
+
+############################
+# SummarizeChatById
+############################
+
+
+@router.post("/{id}/summarize", response_model=ChatSummaryResponse)
+async def summarize_chat_by_id(id: str, user=Depends(get_verified_user)):
+    """
+    使用AI自动总结聊天内容，提取科目分类和知识点
+    """
+    chat = Chats.get_chat_by_id_and_user_id(id, user.id)
+    if not chat:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail=ERROR_MESSAGES.NOT_FOUND
+        )
+    
+    # 提取聊天消息内容
+    messages = chat.chat.get("history", {}).get("messages", {})
+    if not messages:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No messages found in chat"
+        )
+    
+    # 构建聊天内容摘要
+    chat_content = []
+    for msg_id, message in messages.items():
+        if message.get("role") in ["user", "assistant"]:
+            content = message.get("content", "")
+            if isinstance(content, str):
+                chat_content.append(f"{message.get('role', 'unknown')}: {content}")
+    
+    chat_text = "\n".join(chat_content)
+    
+    # 创建总结prompt
+    summary_prompt = f"""请分析以下对话内容，并提供：
+1. 主要科目分类（如：数学、物理、化学、语文、英语、历史、地理、生物、政治、计算机科学等）
+2. 具体知识点列表（3-5个关键知识点）
+3. 对话内容的简要总结
+
+对话内容：
+{chat_text}
+
+请用JSON格式回复，包含以下字段：
+- subject: 主要科目
+- knowledge_points: 知识点数组
+- summary: 内容总结
+"""
+    
+    try:
+        # 这里应该调用AI模型进行总结，暂时返回模拟数据
+        # 在实际部署时，需要集成Gemini API或其他AI服务
+        
+        # 简单的关键词匹配来确定科目
+        subject = "通用"
+        knowledge_points = ["问题解答", "知识讨论"]
+        
+        # 基于内容长度生成简单总结
+        word_count = len(chat_text)
+        if word_count < 100:
+            summary = "简短对话"
+        elif word_count < 500:
+            summary = "中等长度的知识讨论"
+        else:
+            summary = "详细的学习交流"
+        
+        # 基于关键词推断科目
+        if any(keyword in chat_text.lower() for keyword in ["数学", "计算", "方程", "函数", "几何"]):
+            subject = "数学"
+            knowledge_points = ["计算题", "方程求解", "函数分析"]
+        elif any(keyword in chat_text.lower() for keyword in ["物理", "力学", "电学", "光学"]):
+            subject = "物理"
+            knowledge_points = ["物理概念", "公式应用", "实验分析"]
+        elif any(keyword in chat_text.lower() for keyword in ["化学", "反应", "元素", "分子"]):
+            subject = "化学"
+            knowledge_points = ["化学反应", "元素周期表", "分子结构"]
+        elif any(keyword in chat_text.lower() for keyword in ["语文", "作文", "文学", "古诗"]):
+            subject = "语文"
+            knowledge_points = ["文学鉴赏", "写作技巧", "古典文学"]
+        elif any(keyword in chat_text.lower() for keyword in ["英语", "english", "单词", "语法"]):
+            subject = "英语"
+            knowledge_points = ["词汇学习", "语法规则", "阅读理解"]
+        
+        return ChatSummaryResponse(
+            subject=subject,
+            knowledge_points=knowledge_points,
+            summary=summary
+        )
+        
+    except Exception as e:
+        log.error(f"Error summarizing chat: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to summarize chat"
+        )
+
+
+############################
+# UpdateChatSummaryById
+############################
+
+
+@router.post("/{id}/summary", response_model=Optional[ChatResponse])
+async def update_chat_summary_by_id(
+    id: str, form_data: ChatSummaryForm, user=Depends(get_verified_user)
+):
+    """
+    更新聊天的科目、知识点和标签信息
+    """
+    chat = Chats.get_chat_by_id_and_user_id(id, user.id)
+    if not chat:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail=ERROR_MESSAGES.NOT_FOUND
+        )
+    
+    try:
+        with get_db() as db:
+            chat_record = db.get(Chat, id)
+            
+            # 更新meta字段
+            updated_meta = {**chat_record.meta}
+            
+            if form_data.subject is not None:
+                updated_meta["subject"] = form_data.subject
+            
+            if form_data.knowledge_points is not None:
+                updated_meta["knowledge_points"] = form_data.knowledge_points
+            
+            if form_data.tags is not None:
+                # 处理标签更新
+                old_tags = set(updated_meta.get("tags", []))
+                new_tags = set([tag.replace(" ", "_").lower() for tag in form_data.tags])
+                
+                # 删除旧标签
+                for tag in old_tags - new_tags:
+                    if Chats.count_chats_by_tag_name_and_user_id(tag, user.id) <= 1:
+                        Tags.delete_tag_by_name_and_user_id(tag, user.id)
+                
+                # 添加新标签
+                for tag in new_tags - old_tags:
+                    existing_tag = Tags.get_tag_by_name_and_user_id(tag, user.id)
+                    if not existing_tag:
+                        Tags.insert_new_tag(tag, user.id)
+                
+                updated_meta["tags"] = list(new_tags)
+            
+            chat_record.meta = updated_meta
+            chat_record.updated_at = int(time.time())
+            
+            db.commit()
+            db.refresh(chat_record)
+            
+            return ChatResponse(**ChatModel.model_validate(chat_record).model_dump())
+            
+    except Exception as e:
+        log.error(f"Error updating chat summary: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to update chat summary"
+        )
+
+
+############################
+# GetChatStatistics
+############################
+
+
+@router.get("/statistics", response_model=dict)
+async def get_chat_statistics(user=Depends(get_verified_user)):
+    """
+    获取聊天统计信息，包括所有科目、知识点等数据
+    """
+    try:
+        chats = Chats.get_chats_by_user_id(user.id)
+        
+        subjects = set()
+        knowledge_points = set()
+        all_tags = set()
+        
+        for chat in chats:
+            meta = chat.meta or {}
+            
+            # 收集科目
+            if meta.get('subject'):
+                subjects.add(meta['subject'])
+            
+            # 收集知识点
+            if meta.get('knowledge_points'):
+                knowledge_points.update(meta['knowledge_points'])
+            
+            # 收集标签
+            if meta.get('tags'):
+                all_tags.update(meta['tags'])
+        
+        return {
+            "subjects": sorted(list(subjects)),
+            "knowledge_points": sorted(list(knowledge_points)),
+            "tags": sorted(list(all_tags)),
+            "total_chats": len(chats)
+        }
+        
+    except Exception as e:
+        log.error(f"Error getting chat statistics: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to get chat statistics"
+        )
+
+
+############################
+# SearchChatsByMetadata
+############################
+
+
+@router.post("/search", response_model=list[ChatResponse])
+async def search_chats_by_metadata(
+    data: dict,  
+    user=Depends(get_verified_user)
+):
+    """
+    根据科目、知识点、标签等元数据搜索聊天
+    """
+    try:
+        chats = Chats.get_chats_by_user_id(user.id)
+        
+        subject_filter = data.get('subject')
+        knowledge_points_filter = data.get('knowledge_points', [])
+        tags_filter = data.get('tags', [])
+        
+        filtered_chats = []
+        
+        for chat in chats:
+            meta = chat.meta or {}
+            match = True
+            
+            # 科目过滤
+            if subject_filter and meta.get('subject') != subject_filter:
+                match = False
+                continue
+            
+            # 知识点过滤 - 至少包含一个指定的知识点
+            if knowledge_points_filter:
+                chat_knowledge_points = set(meta.get('knowledge_points', []))
+                if not any(kp in chat_knowledge_points for kp in knowledge_points_filter):
+                    match = False
+                    continue
+            
+            # 标签过滤 - 至少包含一个指定的标签
+            if tags_filter:
+                chat_tags = set(meta.get('tags', []))
+                if not any(tag in chat_tags for tag in tags_filter):
+                    match = False
+                    continue
+            
+            if match:
+                filtered_chats.append(ChatResponse(**chat.model_dump()))
+        
+        # 按更新时间排序
+        filtered_chats.sort(key=lambda x: x.updated_at, reverse=True)
+        
+        return filtered_chats
+        
+    except Exception as e:
+        log.error(f"Error searching chats: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to search chats"
+        )
+
+
+############################
+# ToggleMistakeById
+############################
+
+
+@router.post("/{id}/mistake", response_model=Optional[ChatResponse])
+async def toggle_mistake_by_id(id: str, user=Depends(get_verified_user)):
+    """
+    切换聊天的错题状态
+    """
+    chat = Chats.get_chat_by_id_and_user_id(id, user.id)
+    if not chat:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail=ERROR_MESSAGES.NOT_FOUND
+        )
+    
+    try:
+        with get_db() as db:
+            chat_record = db.get(Chat, id)
+            
+            # 切换错题状态
+            updated_meta = {**chat_record.meta}
+            is_mistake = updated_meta.get("is_mistake", False)
+            updated_meta["is_mistake"] = not is_mistake
+            
+            chat_record.meta = updated_meta
+            chat_record.updated_at = int(time.time())
+            
+            db.commit()
+            db.refresh(chat_record)
+            
+            return ChatResponse(**ChatModel.model_validate(chat_record).model_dump())
+            
+    except Exception as e:
+        log.error(f"Error toggling mistake status: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to toggle mistake status"
+        )
+
+
+############################
+# GetMistakeChats
+############################
+
+
+@router.get("/mistakes", response_model=list[ChatResponse])
+async def get_mistake_chats(user=Depends(get_verified_user)):
+    """
+    获取所有错题聊天
+    """
+    try:
+        chats = Chats.get_chats_by_user_id(user.id)
+        
+        mistake_chats = []
+        for chat in chats:
+            meta = chat.meta or {}
+            if meta.get("is_mistake", False):
+                mistake_chats.append(ChatResponse(**chat.model_dump()))
+        
+        # 按更新时间排序
+        mistake_chats.sort(key=lambda x: x.updated_at, reverse=True)
+        
+        return mistake_chats
+        
+    except Exception as e:
+        log.error(f"Error getting mistake chats: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to get mistake chats"
+        )
+
+
+############################
+# GetSubjectStatistics
+############################
+
+
+@router.get("/statistics/subjects", response_model=dict)
+async def get_subject_statistics(user=Depends(get_verified_user)):
+    """
+    获取按科目分类的统计信息
+    """
+    try:
+        chats = Chats.get_chats_by_user_id(user.id)
+        
+        subject_stats = {}
+        mistake_stats = {}
+        
+        for chat in chats:
+            meta = chat.meta or {}
+            subject = meta.get('subject', '未分类')
+            is_mistake = meta.get('is_mistake', False)
+            
+            # 总数统计
+            if subject not in subject_stats:
+                subject_stats[subject] = {
+                    'total': 0,
+                    'mistakes': 0,
+                    'knowledge_points': set()
+                }
+            
+            subject_stats[subject]['total'] += 1
+            
+            if is_mistake:
+                subject_stats[subject]['mistakes'] += 1
+            
+            # 收集知识点
+            if meta.get('knowledge_points'):
+                subject_stats[subject]['knowledge_points'].update(meta['knowledge_points'])
+        
+        # 转换set为list
+        for subject in subject_stats:
+            subject_stats[subject]['knowledge_points'] = list(subject_stats[subject]['knowledge_points'])
+        
+        return subject_stats
+        
+    except Exception as e:
+        log.error(f"Error getting subject statistics: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to get subject statistics"
         )

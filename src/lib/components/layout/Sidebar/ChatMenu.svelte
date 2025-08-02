@@ -21,6 +21,8 @@
 	import DocumentDuplicate from '$lib/components/icons/DocumentDuplicate.svelte';
 	import Bookmark from '$lib/components/icons/Bookmark.svelte';
 	import BookmarkSlash from '$lib/components/icons/BookmarkSlash.svelte';
+	import Brain from '$lib/components/icons/Brain.svelte';
+	import BookOpen from '$lib/components/icons/BookOpen.svelte';
 	import {
 		getChatById,
 		getChatPinnedStatusById,
@@ -38,6 +40,8 @@
 	export let archiveChatHandler: Function;
 	export let renameHandler: Function;
 	export let deleteHandler: Function;
+	export let summaryHandler: Function;
+	export let mistakeHandler: Function;
 	export let onClose: Function;
 
 	export let chatId = '';
@@ -271,6 +275,26 @@
 			>
 				<DocumentDuplicate strokeWidth="2" />
 				<div class="flex items-center">{$i18n.t('Clone')}</div>
+			</DropdownMenu.Item>
+
+			<DropdownMenu.Item
+				class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md"
+				on:click={() => {
+					summaryHandler();
+				}}
+			>
+				<Brain strokeWidth="2" />
+				<div class="flex items-center">智能总结</div>
+			</DropdownMenu.Item>
+
+			<DropdownMenu.Item
+				class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md"
+				on:click={() => {
+					mistakeHandler();
+				}}
+			>
+				<BookOpen strokeWidth="2" />
+				<div class="flex items-center">标记错题</div>
 			</DropdownMenu.Item>
 
 			<DropdownMenu.Item
