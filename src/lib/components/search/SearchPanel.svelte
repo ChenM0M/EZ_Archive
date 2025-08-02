@@ -7,7 +7,6 @@
 	import { user } from '$lib/stores';
 	import { getTimeRange } from '$lib/utils';
 	
-	import Button from '$lib/components/common/Button.svelte';
 	import Search from '$lib/components/icons/Search.svelte';
 	import BookOpen from '$lib/components/icons/BookOpen.svelte';
 	import Brain from '$lib/components/icons/Brain.svelte';
@@ -154,10 +153,10 @@
 			<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
 				<!-- 科目选择 -->
 				<div class="relative">
-					<label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+					<div class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
 						<BookOpen class="w-4 h-4 inline mr-1" />
 						科目
-					</label>
+					</div>
 					<div class="relative">
 						<button
 							class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-left flex items-center justify-between"
@@ -192,10 +191,10 @@
 
 				<!-- 知识点选择 -->
 				<div class="relative">
-					<label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+					<div class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
 						<Brain class="w-4 h-4 inline mr-1" />
 						知识点
-					</label>
+					</div>
 					<div class="relative">
 						<button
 							class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-left flex items-center justify-between"
@@ -242,10 +241,10 @@
 
 				<!-- 标签选择 -->
 				<div class="relative">
-					<label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+					<div class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
 						<Tags class="w-4 h-4 inline mr-1" />
 						标签
-					</label>
+					</div>
 					<div class="relative">
 						<button
 							class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-left flex items-center justify-between"
@@ -293,8 +292,9 @@
 
 			<!-- 搜索按钮 -->
 			<div class="flex gap-3">
-				<Button
-					class="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+				<button
+					type="button"
+					class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
 					on:click={performSearch}
 					disabled={loading || !hasFilters}
 				>
@@ -304,15 +304,16 @@
 						<Search class="w-4 h-4" />
 					{/if}
 					搜索
-				</Button>
+				</button>
 				
 				{#if hasFilters}
-					<Button
-						variant="outline"
+					<button
+						type="button"
+						class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-transparent hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-colors"
 						on:click={clearFilters}
 					>
 						清除条件
-					</Button>
+					</button>
 				{/if}
 			</div>
 		</div>

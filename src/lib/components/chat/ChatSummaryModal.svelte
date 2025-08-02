@@ -6,7 +6,6 @@
 	import { user } from '$lib/stores';
 	
 	import Modal from '../common/Modal.svelte';
-	import Button from '../common/Button.svelte';
 	import ChevronRight from '../icons/ChevronRight.svelte';
 	import Spinner from '../common/Spinner.svelte';
 	import Tags from '../icons/Tags.svelte';
@@ -124,13 +123,14 @@
 				<p class="text-gray-600 dark:text-gray-400 mb-4">
 					使用AI智能分析聊天内容，自动提取科目分类和知识点
 				</p>
-				<Button
-					class="bg-gradient-to-r from-blue-500 to-purple-600 text-white"
+				<button
+					type="button"
+					class="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-md transition-colors flex items-center"
 					on:click={generateSummary}
 				>
 					<Brain class="w-4 h-4 mr-2" />
 					生成智能总结
-				</Button>
+				</button>
 			</div>
 		{:else}
 			<div class="space-y-4">
@@ -179,7 +179,7 @@
 									}
 								}}
 							/>
-							<Button size="sm" on:click={addKnowledgePoint}>添加</Button>
+							<button type="button" class="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors" on:click={addKnowledgePoint}>添加</button>
 						</div>
 						<div class="flex flex-wrap gap-2">
 							{#each summaryData.knowledge_points as point, index}
@@ -218,7 +218,7 @@
 									}
 								}}
 							/>
-							<Button size="sm" on:click={addTag}>添加</Button>
+							<button type="button" class="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors" on:click={addTag}>添加</button>
 						</div>
 						<div class="flex flex-wrap gap-2">
 							{#each summaryData.tags as tag, index}
@@ -253,8 +253,9 @@
 	<div slot="footer" class="flex justify-between">
 		<div class="flex gap-2">
 			{#if summaryData.subject}
-				<Button
-					variant="outline"
+				<button
+					type="button"
+					class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-transparent hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
 					on:click={generateSummary}
 					disabled={loading}
 				>
@@ -262,23 +263,24 @@
 						<Spinner class="w-4 h-4 mr-2" />
 					{/if}
 					重新生成
-				</Button>
+				</button>
 			{/if}
 		</div>
 		
 		<div class="flex gap-2">
-			<Button variant="outline" on:click={() => (show = false)}>取消</Button>
+			<button type="button" class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-transparent hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-colors" on:click={() => (show = false)}>取消</button>
 			{#if summaryData.subject}
-				<Button
+				<button
+					type="button"
+					class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
 					on:click={saveSummary}
-					disabled={loading}
-					class="bg-blue-600 hover:bg-blue-700 text-white"
+					disabled={loading || saving}
 				>
 					{#if loading}
 						<Spinner class="w-4 h-4 mr-2" />
 					{/if}
 					保存
-				</Button>
+				</button>
 			{/if}
 		</div>
 	</div>

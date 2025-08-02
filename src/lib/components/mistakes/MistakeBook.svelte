@@ -7,7 +7,6 @@
 	import { user } from '$lib/stores';
 	import { getTimeRange } from '$lib/utils';
 	
-	import Button from '$lib/components/common/Button.svelte';
 	import BookOpen from '$lib/components/icons/BookOpen.svelte';
 	import Brain from '$lib/components/icons/Brain.svelte';
 	import Tags from '$lib/components/icons/Tags.svelte';
@@ -250,14 +249,13 @@
 								
 								<div class="ml-4 flex items-center gap-2">
 									<Tooltip content="移出错题本">
-										<Button
-											variant="outline"
-											size="sm"
-											class="text-red-600 border-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+										<button
+											type="button"
+											class="px-2 py-1 text-sm border border-red-600 text-red-600 bg-transparent hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors flex items-center"
 											on:click={() => toggleMistake(chat.id)}
 										>
 											<XMark class="w-4 h-4" />
-										</Button>
+										</button>
 									</Tooltip>
 								</div>
 							</div>

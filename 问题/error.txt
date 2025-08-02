@@ -1,0 +1,140 @@
+#26 [build 7/7] RUN npm run build
+#26 15.16 4:48:33 PM [vite-plugin-svelte] WARNING: The following packages have a svelte field in their package.json but no exports condition for svelte.
+#26 15.16 
+#26 15.16 @sveltejs/svelte-virtual-list@3.0.1
+#26 15.16 
+#26 15.16 Please see https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/faq.md#missing-exports-condition for details.
+#26 15.30 vite v5.4.15 building SSR bundle for production...
+#26 15.35 transforming...
+#26 17.23 4:48:35 PM [vite-plugin-svelte] /app/src/lib/components/search/SearchPanel.svelte:131:5 A11y: A form label must be associated with a control.
+#26 17.24 129:         <!-- 科目选择 -->
+#26 17.24 130:         <div class="relative">
+#26 17.24 131:           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+#26 17.24                ^
+#26 17.24 132:             <BookOpen class="w-4 h-4 inline mr-1" />
+#26 17.24 133:             科目
+#26 17.24 4:48:35 PM [vite-plugin-svelte] /app/src/lib/components/search/SearchPanel.svelte:169:5 A11y: A form label must be associated with a control.
+#26 17.24 167:         <!-- 知识点选择 -->
+#26 17.24 168:         <div class="relative">
+#26 17.24 169:           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+#26 17.24                ^
+#26 17.24 170:             <Brain class="w-4 h-4 inline mr-1" />
+#26 17.24 171:             知识点
+#26 17.24 4:48:35 PM [vite-plugin-svelte] /app/src/lib/components/search/SearchPanel.svelte:219:5 A11y: A form label must be associated with a control.
+#26 17.24 217:         <!-- 标签选择 -->
+#26 17.24 218:         <div class="relative">
+#26 17.24 219:           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+#26 17.24                ^
+#26 17.24 220:             <Tags class="w-4 h-4 inline mr-1" />
+#26 17.24 221:             标签
+#26 21.73 4:48:39 PM [vite-plugin-svelte] /app/src/lib/components/icons/DocumentChartBar.svelte:2:11 DocumentChartBar has unused export property 'strokeWidth'. If it is for external reference only, please consider using `export const strokeWidth`
+#26 21.73 1: <script lang="ts">export let className = "size-4";
+#26 21.73 2: export let strokeWidth = "1.5";
+#26 21.73               ^
+#26 21.73 3: </script>
+#26 21.73 4: 
+#26 21.73 4:48:39 PM [vite-plugin-svelte] /app/src/lib/components/icons/ChartBar.svelte:2:11 ChartBar has unused export property 'strokeWidth'. If it is for external reference only, please consider using `export const strokeWidth`
+#26 21.73 1: <script lang="ts">export let className = "size-4";
+#26 21.73 2: export let strokeWidth = "1.5";
+#26 21.73               ^
+#26 21.73 3: </script>
+#26 21.73 4: 
+#26 21.79 4:48:40 PM [vite-plugin-svelte] /app/src/lib/components/admin/Settings/Tools.svelte:14:11 Tools has unused export property 'saveSettings'. If it is for external reference only, please consider using `export const saveSettings`
+#26 21.79 12: import AddServerModal from "$lib/components/AddServerModal.svelte";
+#26 21.79 13: import { getToolServerConnections, setToolServerConnections } from "$lib/apis/configs";
+#26 21.79 14: export let saveSettings;
+#26 21.79                ^
+#26 21.79 15: let servers = null;
+#26 21.79 16: let showConnectionModal = false;
+#26 22.08 4:48:40 PM [vite-plugin-svelte] /app/src/lib/components/layout/Navbar.svelte:29:11 Navbar has unused export property 'title'. If it is for external reference only, please consider using `export const title`
+#26 22.08 27: const i18n = getContext("i18n");
+#26 22.08 28: export let initNewChat;
+#26 22.08 29: export let title = $WEBUI_NAME;
+#26 22.08                ^
+#26 22.08 30: export let shareEnabled = false;
+#26 22.08 31: export let chat;
+#26 22.12 4:48:40 PM [vite-plugin-svelte] /app/src/lib/components/chat/Messages.svelte:24:11 Messages has unused export property 'prompt'. If it is for external reference only, please consider using `export const prompt`
+#26 22.12 22: export let chatId = "";
+#26 22.12 23: export let user = $_user;
+#26 22.12 24: export let prompt;
+#26 22.12                ^
+#26 22.12 25: export let history = {};
+#26 22.12 26: export let selectedModels;
+#26 22.15 4:48:40 PM [vite-plugin-svelte] /app/src/lib/components/workspace/Prompts/PromptEditor.svelte:14:11 PromptEditor has unused export property 'clone'. If it is for external reference only, please consider using `export const clone`
+#26 22.15 12: export let edit = false;
+#26 22.15 13: export let prompt = null;
+#26 22.15 14: export let clone = false;
+#26 22.15                ^
+#26 22.15 15: const i18n = getContext("i18n");
+#26 22.15 16: let loading = false;
+#26 22.51 4:48:40 PM [vite-plugin-svelte] /app/src/lib/components/ImportModal.svelte:11:11 ImportModal has unused export property 'onClose'. If it is for external reference only, please consider using `export const onClose`
+#26 22.51  9: export let onImport = (e) => {
+#26 22.51 10: };
+#26 22.51 11: export let onClose = () => {
+#26 22.51                ^
+#26 22.51 12: };
+#26 22.51 13: export let loadUrlHandler = () => {
+#26 22.99 4:48:41 PM [vite-plugin-svelte] /app/src/lib/components/chat/ModelSelector/Selector.svelte:282:2 A11y: <div> with mouseenter handler must have an ARIA role
+#26 22.99 280:     id="model-selector-{id}-button"
+#26 22.99 281:   >
+#26 22.99 282:     <div
+#26 22.99          ^
+#26 22.99 283:       class="flex w-full text-left px-0.5 bg-transparent truncate {triggerClassName} justify-between {($settings?.highContrastMode ??
+#26 22.99 284:       false)
+#26 23.26 4:48:41 PM [vite-plugin-svelte] /app/src/lib/components/icons/SignOut.svelte:2:11 SignOut has unused export property 'strokeWidth'. If it is for external reference only, please consider using `export const strokeWidth`
+#26 23.26 1: <script lang="ts">export let className = "w-5 h-5";
+#26 23.26 2: export let strokeWidth = "1.5";
+#26 23.26               ^
+#26 23.26 3: </script>
+#26 23.26 4: 
+#26 23.26 4:48:41 PM [vite-plugin-svelte] /app/src/lib/components/workspace/Models/ModelMenu.svelte:17:11 ModelMenu has unused export property 'user'. If it is for external reference only, please consider using `export const user`
+#26 23.26 15: import Link from "$lib/components/icons/Link.svelte";
+#26 23.26 16: const i18n = getContext("i18n");
+#26 23.26 17: export let user;
+#26 23.26                ^
+#26 23.26 18: export let model;
+#26 23.26 19: export let shareHandler;
+#26 23.52 ✓ 286 modules transformed.
+#26 23.53 x Build failed in 8.21s
+#26 23.53 error during build:
+#26 23.53 [vite:load-fallback] Could not load /app/src/lib/components/common/Button.svelte (imported by src/lib/components/mistakes/MistakeBook.svelte): ENOENT: no such file or directory, open '/app/src/lib/components/common/Button.svelte'
+#26 23.53     at async open (node:internal/fs/promises:633:25)
+#26 23.53     at async Object.readFile (node:internal/fs/promises:1237:14)
+#26 23.53     at async Object.load (file:///app/node_modules/vite/dist/node/chunks/dep-CevzF2vT.js:65259:25)
+#26 23.53     at async PluginDriver.hookFirstAndGetPlugin (file:///app/node_modules/rollup/dist/es/shared/node-entry.js:19836:28)
+#26 23.53     at async file:///app/node_modules/rollup/dist/es/shared/node-entry.js:19017:33
+#26 23.53     at async Queue.work (file:///app/node_modules/rollup/dist/es/shared/node-entry.js:20046:32)
+#26 ERROR: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1
+
+#28 [base  9/13] RUN pip3 install --no-cache-dir uv &&     if [ "false" = "true" ]; then     pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128 --no-cache-dir &&     uv pip install --system -r requirements.txt --no-cache-dir &&     python -c "import os; from sentence_transformers import SentenceTransformer; SentenceTransformer(os.environ['RAG_EMBEDDING_MODEL'], device='cpu')" &&     python -c "import os; from faster_whisper import WhisperModel; WhisperModel(os.environ['WHISPER_MODEL'], device='cpu', compute_type='int8', download_root=os.environ['WHISPER_MODEL_DIR'])";     python -c "import os; import tiktoken; tiktoken.get_encoding(os.environ['TIKTOKEN_ENCODING_NAME'])";     else     pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu --no-cache-dir &&     uv pip install --system -r requirements.txt --no-cache-dir &&     python -c "import os; from sentence_transformers import SentenceTransformer; SentenceTransformer(os.environ['RAG_EMBEDDING_MODEL'], device='cpu')" &&     python -c "import os; from faster_whisper import WhisperModel; WhisperModel(os.environ['WHISPER_MODEL'], device='cpu', compute_type='int8', download_root=os.environ['WHISPER_MODEL_DIR'])";     python -c "import os; import tiktoken; tiktoken.get_encoding(os.environ['TIKTOKEN_ENCODING_NAME'])";     fi;     chown -R 0:0 /app/backend/data/
+#28 CANCELED
+------
+ > importing cache manifest from ghcr.io/chenm0m/ez_archive:cache-linux-amd64-main:
+------
+------
+ > [build 7/7] RUN npm run build:
+23.52 ✓ 286 modules transformed.
+23.53 x Build failed in 8.21s
+23.53 error during build:
+23.53 [vite:load-fallback] Could not load /app/src/lib/components/common/Button.svelte (imported by src/lib/components/mistakes/MistakeBook.svelte): ENOENT: no such file or directory, open '/app/src/lib/components/common/Button.svelte'
+23.53     at async open (node:internal/fs/promises:633:25)
+23.53     at async Object.readFile (node:internal/fs/promises:1237:14)
+23.53     at async Object.load (file:///app/node_modules/vite/dist/node/chunks/dep-CevzF2vT.js:65259:25)
+23.53     at async PluginDriver.hookFirstAndGetPlugin (file:///app/node_modules/rollup/dist/es/shared/node-entry.js:19836:28)
+23.53     at async file:///app/node_modules/rollup/dist/es/shared/node-entry.js:19017:33
+23.53     at async Queue.work (file:///app/node_modules/rollup/dist/es/shared/node-entry.js:20046:32)
+------
+
+ 2 warnings found (use docker --debug to expand):
+ - SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "OPENAI_API_KEY") (line 66)
+ - SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "WEBUI_SECRET_KEY") (line 66)
+Dockerfile:37
+--------------------
+  35 |     COPY . .
+  36 |     ENV APP_BUILD_HASH=${BUILD_HASH}
+  37 | >>> RUN npm run build
+  38 |     
+  39 |     ######## WebUI backend ########
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1
+Error: buildx failed with: ERROR: failed to build: failed to solve: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1
